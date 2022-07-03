@@ -1,13 +1,19 @@
 package com.maciejpiech.productcatalog;
 
 import java.math.BigDecimal;
+import javax.persistence.Entity;
+import javax.persistence.Id;
 
+@Entity
 public class ProductData {
-    private final String id;
-    private final String name;
+    @Id
+    private String id;
+    private String name;
     private BigDecimal newPrice;
     private String image;
     private boolean online;
+
+    public ProductData() {}
 
     public ProductData(String productId, String name) {
         this.id = productId;
