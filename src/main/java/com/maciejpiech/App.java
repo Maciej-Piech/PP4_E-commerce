@@ -1,13 +1,17 @@
 package com.maciejpiech;
 
 import com.maciejpiech.productcatalog.MapProductStorage;
+import com.maciejpiech.productcatalog.ProductData;
+import com.maciejpiech.sales.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import com.maciejpiech.creditcard.NameProvider;
 import com.maciejpiech.productcatalog.ProductCatalog;
 
+
 import java.math.BigDecimal;
+import java.util.Collections;
 
 @SpringBootApplication
 public class App {
@@ -35,5 +39,26 @@ public class App {
         productCatalog.publish(productId2);
 
         return productCatalog;
+    }
+
+    @Bean
+    Sales createSales(ProductDetailsProvider productDetailsProvider) {
+        return new Sales(
+                new CartStorage(),
+                productDetailsProvider,
+                new DummyPaymentGateway(),
+                new ReservationStorage()
+        );
+    }
+
+    @Bean
+    ProductDetailsProvider detailsProvider(ProductCatalog catalog) {
+        return (productId -> {
+            ProductData data = catalog.getDetails(productId);
+            return java.util.Optional.of(new ProductDetails(
+                    data.getId(),
+                    data.getName(),
+                    data.getPrice()));
+        });
     }
 }
